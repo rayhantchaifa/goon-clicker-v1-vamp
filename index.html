@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Goon Clicker v1</title>
+  <style>
+    body {
+      background: linear-gradient(to bottom right, #ff9aff, #7ed6df);
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      color: white;
+      text-align: center;
+      padding: 50px;
+      overflow-x: hidden;
+    }
+    h1 {
+      font-size: 3em;
+      text-shadow: 2px 2px #000;
+    }
+    #toilet-img {
+      width: 200px;
+      margin: 30px auto;
+      animation: floaty 2s ease-in-out infinite;
+    }
+    @keyframes floaty {
+      0% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+      100% { transform: translateY(0); }
+    }
+    #beatBtn {
+      background-color: #ff4d4d;
+      color: white;
+      border: none;
+      padding: 20px 40px;
+      font-size: 1.5em;
+      cursor: pointer;
+      border-radius: 10px;
+      box-shadow: 0 0 20px #fff;
+      transition: transform 0.1s ease, background-color 0.3s;
+    }
+    #beatBtn:active {
+      transform: scale(1.1);
+      background-color: #ff1a1a;
+    }
+    #catchphrase {
+      margin-top: 20px;
+      font-size: 2em;
+    }
+    #score {
+      margin-top: 15px;
+      font-size: 1.5em;
+    }
+    #prestige-section {
+      margin-top: 30px;
+      display: none;
+    }
+    #secret-msg {
+      margin-top: 30px;
+      font-size: 2em;
+      color: yellow;
+      display: none;
+    }
+    #sauce {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      background-image: url('https://i.ibb.co/Jm0GKPj/sauce.png');
+      background-size: cover;
+      opacity: 0;
+      transition: opacity 0.3s;
+      z-index: 10;
+    }
+    #shop {
+      margin-top: 30px;
+      display: none;
+    }
+    .upgrade {
+      margin: 10px;
+      padding: 10px 20px;
+      background-color: #00b894;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>💩 Goon Clicker v1 💩</h1>
+  <img id="toilet-img" src="https://i.ibb.co/WPkTztH/toilet.png" alt="Toilet">
+  <br>
+  <button id="beatBtn">BEAT IT!</button>
+  <div id="catchphrase">Let's gooo!</div>
+  <div id="score">Beats: 0</div>
+  <div id="secret-msg">🧀 You unlocked the GOON ZONE 🧀</div>
+  <div id="prestige-section">
+    <button id="prestigeBtn">🔥 Prestige & Restart 🔥</button>
+    <div id="prestigeCount">Prestiges: 0</div>
+  </div>
+  <div id="shop">
+    <h2>🛍️ Goon Shop</h2>
+    <button class="upgrade" onclick="buyUpgrade('multiplier')">Upgrade Beat Power (Cost: 20)</button>
+  </div>
+  <div id="sauce"></div>
+
+  <audio id="beatSound" src="https://cdn.pixabay.com/audio/2023/03/15/audio_34c7e0c850.mp3"></audio>
+  <audio id="prestigeSound" src="https://cdn.pixabay.com/audio/2022/10/06/audio_54a3ccad51.mp3"></audio>
+  <audio id="bgMusic" src="https://cdn.pixabay.com/audio/2023/03/03/audio_252e8fdc89.mp3" autoplay loop></audio>
+
+  <script>
+    const catchphrases = [
+      "Let's gooo!",
+      "Nice!",
+      "Keep gooning!",
+      "You got this!",
+      "Ultra Beat!",
+      "BOOM! Sauce time!",
+      "Double beat combo!",
+      "Maximum effort!",
+      "Sauce overload!",
+      "GOOOOOON POWER!"
+    ];
+
+    let score = 0;
+    let prestiges = 0;
+    let multiplier = 1;
+
+    const sauce = document.getElementById("sauce");
+    const catchphrase = document.getElementById("catchphrase");
+    const beatBtn = document.getElementById("beatBtn");
+    const scoreDisplay = document.getElementById("score");
+    const secretMsg = document.getElementById("secret-msg");
+    const beatSound = document.getElementById("beatSound");
+    const prestigeSound = document.getElementById("prestigeSound");
+    const prestigeSection = document.getElementById("prestige-section");
+    const prestigeBtn = document.getElementById("prestigeBtn");
+    const prestigeCount = document.getElementById("prestigeCount");
+    const shop = document.getElementById("shop");
+
+    beatBtn.addEventListener("click", () => {
+      const random = Math.floor(Math.random() * catchphrases.length);
+      catchphrase.textContent = catchphrases[random];
+
+      sauce.style.opacity = 1;
+      setTimeout(() => {
+        sauce.style.opacity = 0;
+      }, 400);
+
+      beatSound.currentTime = 0;
+      beatSound.play();
+
+      score += multiplier;
+      scoreDisplay.textContent = `Beats: ${score}`;
+
+      if (score >= 20) {
+        secretMsg.style.display = 'block';
+        prestigeSection.style.display = 'block';
+        shop.style.display = 'block';
+      }
+    });
+
+    prestigeBtn.addEventListener("click", () => {
+      prestigeSound.currentTime = 0;
+      prestigeSound.play();
+      prestiges++;
+      score = 0;
+      multiplier = 1;
+      scoreDisplay.textContent = `Beats: ${score}`;
+      prestigeCount.textContent = `Prestiges: ${prestiges}`;
+      catchphrase.textContent = "Back to the grind!";
+      secretMsg.style.display = 'none';
+      shop.style.display = 'none';
+    });
+
+    function buyUpgrade(type) {
+      if (type === 'multiplier' && score >= 20) {
+        score -= 20;
+        multiplier++;
+        scoreDisplay.textContent = `Beats: ${score}`;
+        catchphrase.textContent = `Beat power upgraded! (x${multiplier})`;
+      }
+    }
+  </script>
+</body>
+</html>
